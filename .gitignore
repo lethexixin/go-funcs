@@ -13,3 +13,18 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+.idea
+target/
+go.sum
+
+# go mod, go test
+vendor/
+logs/
+.vscode/
+cache
+log/
+*.log
+
+# macOS
+.DS_Store
