@@ -4,9 +4,10 @@ go 1.17
 
 require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1612
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/dgryski/go-skip32 v0.0.0-20151116144831-0e0460d2a555
 	github.com/gin-gonic/gin v1.7.7
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/prometheus/client_golang v1.12.2
@@ -14,8 +15,8 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	go.uber.org/zap v1.21.0
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
-	google.golang.org/grpc v1.31.0
-	google.golang.org/protobuf v1.26.0
+	google.golang.org/grpc v1.46.0
+	google.golang.org/protobuf v1.28.0
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gorm.io/driver/clickhouse v0.3.2
@@ -65,7 +66,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/genproto v0.0.0-20200825200019-8632dd797987 // indirect
+	google.golang.org/genproto v0.0.0-20220503193339-ba3ae3f07e29 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
