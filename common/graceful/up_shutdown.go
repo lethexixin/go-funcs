@@ -54,27 +54,13 @@ func destroyAllRequests() {
 	for _, srv := range servers {
 		destroyRequest(srv)
 	}
-
-	for _, e := range echos {
-		destroyRequest(e)
-	}
 }
 
-func destroyRequest(srv interface{}) {
-	switch srv.(type) {
-	case HttpSrvInfo:
-		logger.Infof("graceful shutdown --- destroy http server, addr:%s .", srv.(HttpSrvInfo).addr)
-		ctx, cancel := context.WithTimeout(context.Background(), defaultShutDownTime)
-		defer cancel()
-		if err := srv.(HttpSrvInfo).Shutdown(ctx); err != nil {
-			logger.Errorf("http server shutdown err:%s", err.Error())
-		}
-	case EchoInfo:
-		logger.Infof("graceful shutdown --- destroy http server, addr:%s .", srv.(EchoInfo).addr)
-		ctx, cancel := context.WithTimeout(context.Background(), defaultShutDownTime)
-		defer cancel()
-		if err := srv.(EchoInfo).Echo.Shutdown(ctx); err != nil {
-			logger.Errorf("http server shutdown err:%s", err.Error())
-		}
+func destroyRequest(srv HttpSrvInfo) {
+	logger.Infof("graceful shutdown --- destroy http server, addr:%s .", srv.addr)
+	ctx, cancel := context.WithTimeout(context.Background(), defaultShutDownTime)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		logger.Errorf("http server shutdown err:%s", err.Error())
 	}
 }

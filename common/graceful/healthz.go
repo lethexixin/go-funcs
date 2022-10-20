@@ -23,7 +23,7 @@ func handlerUpListen() {
 		}
 		http.HandleFunc("/"+healthzInfo.router, h)
 		if err := http.ListenAndServe(":"+healthzInfo.port, nil); err != nil {
-			logger.Fatalf("start healthz check err:%s", err.Error())
+			logger.Errorf("start healthz check err:%s", err.Error())
 		}
 	}()
 }

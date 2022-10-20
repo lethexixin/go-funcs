@@ -9,7 +9,6 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.2
-	github.com/labstack/echo/v4 v4.7.2
 	github.com/prometheus/client_golang v1.12.2
 	github.com/rabbitmq/amqp091-go v1.3.4
 	github.com/satori/go.uuid v1.2.0
@@ -48,9 +47,7 @@ require (
 	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
-	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -59,8 +56,6 @@ require (
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
-	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasttemplate v1.2.1 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect

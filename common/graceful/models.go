@@ -6,10 +6,6 @@ import (
 	"time"
 )
 
-import (
-	"github.com/labstack/echo/v4"
-)
-
 const defaultShutDownTime = time.Second * 15
 
 var (
@@ -22,8 +18,6 @@ var (
 	}
 
 	servers = make([]HttpSrvInfo, 0)
-
-	echos = make([]EchoInfo, 0)
 )
 
 type HealthzInfo struct {
@@ -45,17 +39,5 @@ func SetHttpSrvInfo(srv *http.Server, addr string) {
 	servers = append(servers, HttpSrvInfo{
 		Server: srv,
 		addr:   addr,
-	})
-}
-
-type EchoInfo struct {
-	*echo.Echo
-	addr string
-}
-
-func SetEchoInfo(echo *echo.Echo, addr string) {
-	echos = append(echos, EchoInfo{
-		Echo: echo,
-		addr: addr,
 	})
 }
