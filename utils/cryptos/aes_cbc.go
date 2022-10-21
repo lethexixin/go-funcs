@@ -78,9 +78,9 @@ func aesCBCDecrypt(cipherText, key []byte, iv string) ([]byte, error) {
 	return cipherText[:len(cipherText)-pad], nil
 }
 
-// EncodeAESCBC
+// EncodeAESCBC aes-256-cbc AES/CBC/PKCS5Padding
 /*
-AES_CBC加密解密的算法为: aes-256-cbc, iv初始向量为随机16位字符串, 常用于HTTP中, 过程如下:
+AES_CBC加密解密的算法为: aes-256-cbc, iv初始向量为随机16位字符串, padding为PKCS5Padding, 常用于HTTP中, 过程如下:
 1.客户端发送加密请求体 ---> 2.服务器接收请求体并解密 ---> 3.服务器处理请求,返回加密响应体 ---> 4.客户端接收响应体并解密
 
 加密数据处理的流程为: 先对数据进行zlib 6 level压缩, 然后按照aes-256-cbc用key和iv对数据进行加密, 最后对iv拼接加密的数据进行Base64编码
@@ -114,9 +114,9 @@ func EncodeAESCBC(data, key []byte) ([]byte, error) {
 	return buf, nil
 }
 
-// DecodeAESCBC
+// DecodeAESCBC aes-256-cbc AES/CBC/PKCS5Padding
 /*
-AES_CBC加密解密的算法为: aes-256-cbc, iv初始向量为随机16位字符串, 常用于HTTP中, 过程如下:
+AES_CBC加密解密的算法为: aes-256-cbc, iv初始向量为随机16位字符串, padding为PKCS5Padding, 常用于HTTP中, 过程如下:
 1.客户端发送加密请求体 ---> 2.服务器接收请求体并解密 ---> 3.服务器处理请求,返回加密响应体 ---> 4.客户端接收响应体并解密
 
 解密数据处理的流程为: 先将iv拼接加密的数据进行Base64解码, 然后按照aes-256-cbc用key和iv对数据进行解密, 最后对数据进行zlib 6 level解压
