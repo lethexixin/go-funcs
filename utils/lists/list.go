@@ -10,7 +10,7 @@ type Set struct {
 	m map[interface{}]bool
 }
 
-// 新建集合对象
+// New 新建集合对象
 func New(items ...interface{}) *Set {
 	s := &Set{
 		m: make(map[interface{}]bool, len(items)),
@@ -19,7 +19,7 @@ func New(items ...interface{}) *Set {
 	return s
 }
 
-// 添加元素
+// Add 添加元素
 func (s *Set) Add(items ...interface{}) {
 	s.Lock()
 	defer s.Unlock()
@@ -28,7 +28,7 @@ func (s *Set) Add(items ...interface{}) {
 	}
 }
 
-// 删除元素
+// Remove 删除元素
 func (s *Set) Remove(items ...interface{}) {
 	s.Lock()
 	defer s.Unlock()
@@ -37,7 +37,7 @@ func (s *Set) Remove(items ...interface{}) {
 	}
 }
 
-// 判断元素是否存在
+// Has 判断元素是否存在
 func (s *Set) Has(items ...interface{}) bool {
 	s.RLock()
 	defer s.RUnlock()
@@ -49,24 +49,24 @@ func (s *Set) Has(items ...interface{}) bool {
 	return true
 }
 
-// 元素个数
+// Count 元素个数
 func (s *Set) Count() int {
 	return len(s.m)
 }
 
-// 清空集合
+// Clear 清空集合
 func (s *Set) Clear() {
 	s.Lock()
 	defer s.Unlock()
 	s.m = map[interface{}]bool{}
 }
 
-// 空集合判断
+// Empty 空集合判断
 func (s *Set) Empty() bool {
 	return len(s.m) == 0
 }
 
-// 无序列表
+// List 无序列表
 func (s *Set) List() []interface{} {
 	s.RLock()
 	defer s.RUnlock()
@@ -77,7 +77,7 @@ func (s *Set) List() []interface{} {
 	return list
 }
 
-// 排序列表,请参照此sort.Slice的写法,直接调用此方法无效
+// SortList 排序列表,请参照此sort.Slice的写法,直接调用此方法无效
 func (s *Set) SortList(pleaseDoNotUseThisFuncButYouCanSeeHowToUseInThisFunc chan error) []interface{} {
 	list := s.List()
 	sort.Slice(list, func(i, j int) bool {
@@ -89,7 +89,7 @@ func (s *Set) SortList(pleaseDoNotUseThisFuncButYouCanSeeHowToUseInThisFunc chan
 	return list
 }
 
-// 并集
+// Union 并集
 func (s *Set) Union(sets ...*Set) *Set {
 	r := New(s.List()...)
 	for _, set := range sets {
@@ -100,7 +100,7 @@ func (s *Set) Union(sets ...*Set) *Set {
 	return r
 }
 
-// 差集
+// DifferenceSet 差集
 func (s *Set) DifferenceSet(sets ...*Set) *Set {
 	r := New(s.List()...)
 	for _, set := range sets {
@@ -113,7 +113,7 @@ func (s *Set) DifferenceSet(sets ...*Set) *Set {
 	return r
 }
 
-// 交集
+// Intersection 交集
 func (s *Set) Intersection(sets ...*Set) *Set {
 	r := New(s.List()...)
 	for _, set := range sets {
@@ -126,7 +126,7 @@ func (s *Set) Intersection(sets ...*Set) *Set {
 	return r
 }
 
-// 补集
+// Complement 补集
 func (s *Set) Complement(full *Set) *Set {
 	r := New()
 	for e := range full.m {

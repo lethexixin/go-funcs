@@ -58,7 +58,7 @@ type Options struct {
 
 type Option func(*Options)
 
-var (
+const (
 	DefaultAddr         = "amqp://root:123456@127.0.0.1:5672"
 	DefaultVirtualHost  = "rmq"
 	DefaultQueueName    = "rmq-queue"
@@ -116,8 +116,7 @@ func (p *producer) isExchangeProducer() bool {
 	return false
 }
 
-// New creates a new consumer state instance, and automatically
-// attempts to connect to the server.
+// Init creates a new consumer state instance, and automatically attempts to connect to the server.
 func (p *MQProducer) Init(options ...Option) {
 	opts := Options{
 		addr:         DefaultAddr,
@@ -140,8 +139,7 @@ func (p *MQProducer) Init(options ...Option) {
 	go p.Producer.handleReconnect()
 }
 
-// handleReconnect will wait for a connection error on
-// notifyConnClose, and then continuously attempt to reconnect.
+// handleReconnect will wait for a connection error on notifyConnClose, and then continuously attempt to reconnect.
 func (p *producer) handleReconnect() {
 	for {
 		p.isReady = false
@@ -181,7 +179,7 @@ func (p *producer) connect() (*amqp.Connection, error) {
 	return conn, nil
 }
 
-// handleReconnect will wait for a channel error
+// handleReInit will wait for a channel error
 // and then continuously attempt to re-initialize both channels
 func (p *producer) handleReInit(conn *amqp.Connection) bool {
 	for {
@@ -288,10 +286,10 @@ func (p *producer) changeChannel(channel *amqp.Channel) {
 	p.channel.NotifyPublish(p.notifyConfirm)
 }
 
-// Push will push data onto the queue, and wait for a confirm.
+// Push will push data onto the queue, and wait for confirmation.
 // If no confirms are received until within the resendTimeout,
-// it continuously re-sends messages until a confirm is received.
-// This will block until the server sends a confirm. Errors are
+// it continuously re-sends messages until a confirmation is received.
+// This will block until the server sends a confirmation. Errors are
 // only returned if the push action itself fails, see UnsafePush.
 func (p *producer) Push(data []byte, priority uint8) error {
 	if !p.isReady {
@@ -359,7 +357,7 @@ func (p *producer) Stream() (<-chan amqp.Delivery, error) {
 	)
 }
 
-// Close will cleanly shutdown the channel and connection.
+// Close will cleanly shut down the channel and connection.
 func (p *producer) Close() error {
 	if !p.isReady {
 		return errAlreadyClosed

@@ -6,9 +6,13 @@ import (
 	"os"
 	"strings"
 	"sync"
+)
 
+import (
 	"github.com/lethexixin/go-funcs/common/logger"
+)
 
+import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -31,22 +35,22 @@ func InitMetrics(appName string) {
 }
 
 type Options struct {
-	BootstrapServers       string
-	GroupId                string
-	AutoOffsetReset        string
-	HeartbeatIntervalMs    int
-	SessionTimeoutMs       int
-	MaxPollIntervalMs      int
-	FetchMaxBytes          int
-	MaxPartitionFetchBytes int
-	SecurityProtocol       string
-	SaslMechanism          string
-	SaslUsername           string
-	SaslPassword           string
-	SubscribeTopics        []string
+	bootstrapServers       string
+	groupId                string
+	autoOffsetReset        string
+	heartbeatIntervalMs    int
+	sessionTimeoutMs       int
+	maxPollIntervalMs      int
+	fetchMaxBytes          int
+	maxPartitionFetchBytes int
+	securityProtocol       string
+	saslMechanism          string
+	saslUsername           string
+	saslPassword           string
+	subscribeTopics        []string
 
-	SignChan         chan os.Signal
-	ChanConsumerData chan MsgConsumerData
+	signChan         chan os.Signal
+	chanConsumerData chan MsgConsumerData
 }
 
 type MsgConsumerData struct {
@@ -57,16 +61,16 @@ type MsgConsumerData struct {
 
 type Option func(*Options)
 
-var (
+const (
 	// kafka consumer config refer to https://help.aliyun.com/document_detail/68166.html and https://lovergamer.com/posts/kafka/kafka_consumers
 
 	DefaultBootstrapServers = "127.0.0.1:9092"
 	DefaultGroupId          = "test-group"
 	// DefaultAutoOffsetReset 消费位点重置策略
 	DefaultAutoOffsetReset = "latest"
-	// DefaultHeartbeatIntervalMs 指定对消费者组协调器的心跳检查之间的间隔（以毫秒为单位）,以指示消费者处于活动状态并已连接
+	// DefaultHeartbeatIntervalMs 指定对消费者组协调器的心跳检查之间的间隔(以毫秒为单位),以指示消费者处于活动状态并已连接
 	DefaultHeartbeatIntervalMs = 3000
-	// DefaultSessionTimeoutMs 指定消费者组中的消费者在被视为不活动之前可以与代理断开联系的最长时间（以毫秒为单位）
+	// DefaultSessionTimeoutMs 指定消费者组中的消费者在被视为不活动之前可以与代理断开联系的最长时间(以毫秒为单位)
 	DefaultSessionTimeoutMs = 30000
 	// DefaultMaxPollIntervalMs 设置检查消费者是否继续处理消息的时间间隔
 	DefaultMaxPollIntervalMs = 300000
@@ -78,96 +82,96 @@ var (
 	DefaultSaslMechanism          = "PLAIN"
 	DefaultSaslUsername           = "kafka"
 	DefaultSaslPassword           = "123456"
-	DefaultSubscribeTopics        = []string{"test-topic"}
+	DefaultSubscribeTopics        = "test-topic"
 )
 
 func BootstrapServers(bootstrapServers string) Option {
 	return func(o *Options) {
-		o.BootstrapServers = bootstrapServers
+		o.bootstrapServers = bootstrapServers
 	}
 }
 
 func GroupId(groupId string) Option {
 	return func(o *Options) {
-		o.GroupId = groupId
+		o.groupId = groupId
 	}
 }
 
 func AutoOffsetReset(autoOffsetReset string) Option {
 	return func(o *Options) {
-		o.AutoOffsetReset = autoOffsetReset
+		o.autoOffsetReset = autoOffsetReset
 	}
 }
 
 func HeartbeatIntervalMs(heartbeatIntervalMs int) Option {
 	return func(o *Options) {
-		o.HeartbeatIntervalMs = heartbeatIntervalMs
+		o.heartbeatIntervalMs = heartbeatIntervalMs
 	}
 }
 
 func SessionTimeoutMs(sessionTimeoutMs int) Option {
 	return func(o *Options) {
-		o.SessionTimeoutMs = sessionTimeoutMs
+		o.sessionTimeoutMs = sessionTimeoutMs
 	}
 }
 
 func MaxPollIntervalMs(maxPollIntervalMs int) Option {
 	return func(o *Options) {
-		o.MaxPollIntervalMs = maxPollIntervalMs
+		o.maxPollIntervalMs = maxPollIntervalMs
 	}
 }
 
 func FetchMaxBytes(fetchMaxBytes int) Option {
 	return func(o *Options) {
-		o.FetchMaxBytes = fetchMaxBytes
+		o.fetchMaxBytes = fetchMaxBytes
 	}
 }
 
 func MaxPartitionFetchBytes(maxPartitionFetchBytes int) Option {
 	return func(o *Options) {
-		o.MaxPartitionFetchBytes = maxPartitionFetchBytes
+		o.maxPartitionFetchBytes = maxPartitionFetchBytes
 	}
 }
 
 func SecurityProtocol(securityProtocol string) Option {
 	return func(o *Options) {
-		o.SecurityProtocol = securityProtocol
+		o.securityProtocol = securityProtocol
 	}
 }
 
 func SaslMechanism(saslMechanism string) Option {
 	return func(o *Options) {
-		o.SaslMechanism = saslMechanism
+		o.saslMechanism = saslMechanism
 	}
 }
 
 func SaslUsername(saslUsername string) Option {
 	return func(o *Options) {
-		o.SaslUsername = saslUsername
+		o.saslUsername = saslUsername
 	}
 }
 
 func SaslPassword(saslPassword string) Option {
 	return func(o *Options) {
-		o.SaslPassword = saslPassword
+		o.saslPassword = saslPassword
 	}
 }
 
 func SubscribeTopics(subscribeTopics []string) Option {
 	return func(o *Options) {
-		o.SubscribeTopics = subscribeTopics
+		o.subscribeTopics = subscribeTopics
 	}
 }
 
 func SignChan(signChan chan os.Signal) Option {
 	return func(o *Options) {
-		o.SignChan = signChan
+		o.signChan = signChan
 	}
 }
 
 func ChanConsumerData(chanConsumerData chan MsgConsumerData) Option {
 	return func(o *Options) {
-		o.ChanConsumerData = chanConsumerData
+		o.chanConsumerData = chanConsumerData
 	}
 }
 
@@ -176,56 +180,56 @@ func ChanConsumerData(chanConsumerData chan MsgConsumerData) Option {
 //1. confluent-kafka-go build refer to docs/kafka.md
 func (k *KafkaConsumer) InitConsumer(options ...Option) (err error) {
 	opts := Options{
-		BootstrapServers:       DefaultBootstrapServers,
-		GroupId:                DefaultGroupId,
-		AutoOffsetReset:        DefaultAutoOffsetReset,
-		HeartbeatIntervalMs:    DefaultHeartbeatIntervalMs,
-		SessionTimeoutMs:       DefaultSessionTimeoutMs,
-		MaxPollIntervalMs:      DefaultMaxPollIntervalMs,
-		FetchMaxBytes:          DefaultFetchMaxBytes,
-		MaxPartitionFetchBytes: DefaultMaxPartitionFetchBytes,
-		SecurityProtocol:       DefaultSecurityProtocol,
-		SaslMechanism:          DefaultSaslMechanism,
-		SaslUsername:           DefaultSaslUsername,
-		SaslPassword:           DefaultSaslPassword,
-		SubscribeTopics:        DefaultSubscribeTopics,
+		bootstrapServers:       DefaultBootstrapServers,
+		groupId:                DefaultGroupId,
+		autoOffsetReset:        DefaultAutoOffsetReset,
+		heartbeatIntervalMs:    DefaultHeartbeatIntervalMs,
+		sessionTimeoutMs:       DefaultSessionTimeoutMs,
+		maxPollIntervalMs:      DefaultMaxPollIntervalMs,
+		fetchMaxBytes:          DefaultFetchMaxBytes,
+		maxPartitionFetchBytes: DefaultMaxPartitionFetchBytes,
+		securityProtocol:       DefaultSecurityProtocol,
+		saslMechanism:          DefaultSaslMechanism,
+		saslUsername:           DefaultSaslUsername,
+		saslPassword:           DefaultSaslPassword,
+		subscribeTopics:        []string{DefaultSubscribeTopics},
 	}
 
 	for _, o := range options {
 		o(&opts)
 	}
 
-	if opts.ChanConsumerData == nil || opts.SignChan == nil {
-		return errors.New("opts.ChanConsumerData == nil || opts.SignChan == nil")
+	if opts.chanConsumerData == nil || opts.signChan == nil {
+		return errors.New("opts.chanConsumerData == nil || opts.signChan == nil")
 	}
 
 	kafkaConf := &kafka.ConfigMap{
-		"bootstrap.servers":         opts.BootstrapServers,
-		"group.id":                  opts.GroupId,
+		"bootstrap.servers":         opts.bootstrapServers,
+		"group.id":                  opts.groupId,
 		"api.version.request":       "true",
-		"auto.offset.reset":         opts.AutoOffsetReset,
-		"heartbeat.interval.ms":     opts.HeartbeatIntervalMs,
-		"session.timeout.ms":        opts.SessionTimeoutMs,
-		"max.poll.interval.ms":      opts.MaxPollIntervalMs,
-		"fetch.max.bytes":           opts.FetchMaxBytes,
-		"max.partition.fetch.bytes": opts.MaxPartitionFetchBytes}
+		"auto.offset.reset":         opts.autoOffsetReset,
+		"heartbeat.interval.ms":     opts.heartbeatIntervalMs,
+		"session.timeout.ms":        opts.sessionTimeoutMs,
+		"max.poll.interval.ms":      opts.maxPollIntervalMs,
+		"fetch.max.bytes":           opts.fetchMaxBytes,
+		"max.partition.fetch.bytes": opts.maxPartitionFetchBytes}
 
-	switch strings.ToUpper(opts.SecurityProtocol) {
+	switch strings.ToUpper(opts.securityProtocol) {
 	case "PLAINTEXT":
 		_ = kafkaConf.SetKey("security.protocol", "plaintext")
 	case "SASL_SSL":
 		_ = kafkaConf.SetKey("security.protocol", "sasl_ssl")
 		_ = kafkaConf.SetKey("ssl.ca.location", "./conf/mix-4096-ca-cert")
-		_ = kafkaConf.SetKey("sasl.username", opts.SaslUsername)
-		_ = kafkaConf.SetKey("sasl.password", opts.SaslPassword)
-		_ = kafkaConf.SetKey("sasl.mechanism", opts.SaslMechanism)
+		_ = kafkaConf.SetKey("sasl.username", opts.saslUsername)
+		_ = kafkaConf.SetKey("sasl.password", opts.saslPassword)
+		_ = kafkaConf.SetKey("sasl.mechanism", opts.saslMechanism)
 	case "SASL_PLAINTEXT":
 		_ = kafkaConf.SetKey("security.protocol", "sasl_plaintext")
-		_ = kafkaConf.SetKey("sasl.username", opts.SaslUsername)
-		_ = kafkaConf.SetKey("sasl.password", opts.SaslPassword)
-		_ = kafkaConf.SetKey("sasl.mechanism", opts.SaslMechanism)
+		_ = kafkaConf.SetKey("sasl.username", opts.saslUsername)
+		_ = kafkaConf.SetKey("sasl.password", opts.saslPassword)
+		_ = kafkaConf.SetKey("sasl.mechanism", opts.saslMechanism)
 	default:
-		return fmt.Errorf("unknown kafka protocol:%s", opts.SecurityProtocol)
+		return fmt.Errorf("unknown kafka protocol:%s", opts.securityProtocol)
 	}
 
 	k.Consumer, err = kafka.NewConsumer(kafkaConf)
@@ -237,7 +241,7 @@ func (k *KafkaConsumer) InitConsumer(options ...Option) (err error) {
 
 	logger.Info("create kafka consumer successful")
 
-	err = k.Consumer.SubscribeTopics(opts.SubscribeTopics, nil)
+	err = k.Consumer.SubscribeTopics(opts.subscribeTopics, nil)
 	if err != nil {
 		logger.Errorf("kafka consumer subscribe topics err:%s", err.Error())
 		return err
@@ -246,8 +250,8 @@ func (k *KafkaConsumer) InitConsumer(options ...Option) (err error) {
 	run := true
 	for run {
 		select {
-		case <-opts.SignChan:
-			logger.Info("consumer get <-opts.SignChan")
+		case <-opts.signChan:
+			logger.Info("consumer get <-opts.signChan")
 			run = false
 		default:
 			msg, err := k.Consumer.ReadMessage(-1)
@@ -255,16 +259,16 @@ func (k *KafkaConsumer) InitConsumer(options ...Option) (err error) {
 				// The client will automatically try to recover from all errors.
 				logger.Errorf("consumer read msg err:%s", err.Error())
 				if counterMetric != nil {
-					counterMetric.With(prometheus.Labels{"topic": strings.Join(opts.SubscribeTopics, ","), "flag": "error"}).Inc()
+					counterMetric.With(prometheus.Labels{"topic": strings.Join(opts.subscribeTopics, ","), "flag": "error"}).Inc()
 				}
 			} else {
-				opts.ChanConsumerData <- MsgConsumerData{
+				opts.chanConsumerData <- MsgConsumerData{
 					Data:      msg.Value,
 					Offset:    int64(msg.TopicPartition.Offset),
 					Partition: msg.TopicPartition.Partition,
 				}
 				if counterMetric != nil {
-					counterMetric.With(prometheus.Labels{"topic": strings.Join(opts.SubscribeTopics, ","), "flag": "success"}).Inc()
+					counterMetric.With(prometheus.Labels{"topic": strings.Join(opts.subscribeTopics, ","), "flag": "success"}).Inc()
 				}
 			}
 		}

@@ -97,7 +97,7 @@ type Options struct {
 
 type Option func(*Options)
 
-var (
+const (
 	DefaultEnv        = LogDevelopEnv
 	DefaultLevel      = zapcore.DebugLevel
 	DefaultCallerSkip = 1
@@ -127,7 +127,7 @@ func FileLog(fileLog *FileLogger) Option {
 	}
 }
 
-// SetLogger: customize yourself logger.
+// SetLogger customize yourself logger.
 func SetLogger(options ...Option) (err error) {
 	opts := Options{
 		env:        DefaultEnv,
@@ -175,7 +175,7 @@ func GetLogger() Logger {
 	return log
 }
 
-// SetLoggerCallerDisable: disable caller info in production env for performance improve.
+// SetLoggerCallerDisable disable caller info in production env for performance improve.
 // It is highly recommended that you execute this method in a production environment.
 func SetLoggerCallerDisable() (err error) {
 	zapLoggerConfig.Development = false

@@ -74,8 +74,8 @@ public class AesCdc {
     // 解压base64内容
     public static byte[] decompress(byte[] data) {
         byte[] output = null;
-        if (data != null && data.length > 0) { // data.length > 0一定要加，否则解压长度为0的字节数组会死循环
-            Inflater inf = new Inflater(false);    // no wrap header and tailer
+        if (data != null && data.length > 0) { // data.length > 0一定要加, 否则解压长度为0的字节数组会死循环
+            Inflater inf = new Inflater(false);    // no wrap header and tail
             inf.reset();
             inf.setInput(data);
 

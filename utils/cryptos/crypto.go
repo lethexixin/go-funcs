@@ -11,7 +11,7 @@ import (
 	"github.com/dgryski/go-skip32"
 )
 
-//EnSkip32 加密
+// EnSkip32 加密
 func EnSkip32(key string, value uint32) (uint32, error) {
 	s, err := skip32.New([]byte(key))
 	if err != nil {
@@ -20,7 +20,7 @@ func EnSkip32(key string, value uint32) (uint32, error) {
 	return s.Obfus(value), nil
 }
 
-//DeSkip32 解密
+// DeSkip32 解密
 func DeSkip32(key string, value uint32) (uint32, error) {
 	s, err := skip32.New([]byte(key))
 	if err != nil {

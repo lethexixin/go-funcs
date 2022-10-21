@@ -28,7 +28,7 @@ type Options struct {
 
 type Option func(*Options)
 
-var (
+const (
 	DefaultAddr        = "amqp://root:123456@127.0.0.1:5672"
 	DefaultVirtualHost = "rmq"
 	DefaultQueueName   = "rmq-queue"
@@ -59,7 +59,7 @@ func TagConsumer(tagConsumer string) Option {
 	}
 }
 
-// Consumer holds all information
+// consumer holds all information
 // about the RabbitMQ connection
 // This setup does limit a consumer
 // to one exchange. This should not be
@@ -73,10 +73,9 @@ type consumer struct {
 	done    chan error
 }
 
-// NewConsumer returns a Consumer struct
-// that has been initialized properly
-// essentially don't touch conn, channel, or
-// done and you can create Consumer manually
+// Init
+//
+// that has been initialized properly essentially don't touch conn, channel, or done, and you can create Consumer manually
 func (c *MQConsumer) Init(options ...Option) {
 	opts := Options{
 		addr:        DefaultAddr,
@@ -95,7 +94,7 @@ func (c *MQConsumer) Init(options ...Option) {
 	}
 }
 
-// ReConnect is called in places where NotifyClose() channel is called
+// reConnect is called in places where NotifyClose() channel is called
 // wait 30 seconds before trying to reconnect. Any shorter amount of time
 // will  likely destroy the error log while waiting for servers to come
 // back online. This requires two parameters which is just to satisfy
@@ -146,8 +145,8 @@ func (c *consumer) AnnounceQueue(queueName string, ack bool) (<-chan amqp.Delive
 	// Qos determines the amount of messages that the queue will pass to you before
 	// it waits for you to ack them. This will slow down queue consumption but
 	// give you more certainty that all messages are being processed. As load increases
-	// I would recommend upping the about of Threads and Processors the go process
-	// uses before changing this although you will eventually need to reach some
+	// I would recommend upping  about of Threads and Processors the go process
+	// uses before changing this, although you will eventually need to reach some
 	// balance between threads, process, and Qos.
 	err := c.channel.Qos(50, 0, false)
 	if err != nil {
@@ -177,7 +176,7 @@ func (c *consumer) AnnounceQueue(queueName string, ack bool) (<-chan amqp.Delive
 // this should be the last thing called in main as code under it will
 // become unreachable unless put int a goroutine. The q and rk params
 // are redundant but allow you to have multiple queue listeners in main
-// without them you would be tied into only using one queue per connection
+// without them, you would be tied into only using one queue per connection
 func (c *consumer) Handle(delivery <-chan amqp.Delivery, fn func(<-chan amqp.Delivery), threads int, queue string, ack bool) {
 	var err error
 	for {

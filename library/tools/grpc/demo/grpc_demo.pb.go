@@ -4,7 +4,7 @@
 // 	protoc        v3.12.3
 // source: grpc-demo.proto
 
-//package与go_package,java_package有些不同，java_package是定义编译生成的java文件所在的目录，而package是对应的java类的命名空间,go_package是go的包名
+//package与go_package,java_package有些不同, java_package是定义编译生成的java文件所在的目录, 而package是对应的java类的命名空间,go_package是go的包名
 
 package grpc
 
@@ -31,7 +31,7 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-//请求参数 基于序号的协议字段映射，所以字段可以乱序，可缺段
+//请求参数 基于序号的协议字段映射, 所以字段可以乱序, 可缺段
 type Person struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

@@ -9,7 +9,7 @@ import (
 )
 
 import (
-	uuid "github.com/satori/go.uuid"
+	"github.com/google/uuid"
 )
 
 func init() {
@@ -26,17 +26,17 @@ func RandString(len int) (s string) {
 	return
 }
 
-// 生成随机UUID4
+// UUID4 生成随机UUID4
 func UUID4() string {
-	return uuid.NewV4().String()
+	return uuid.New().String()
 }
 
-// 判断传入的字符串str首或尾是否包含fixStr字符串,如果包含返回true
+// StrPreAndSufIsContainFixStr 判断传入的字符串str首或尾是否包含fixStr字符串,如果包含返回true
 func StrPreAndSufIsContainFixStr(str string, fixStr string) bool {
 	return strings.HasPrefix(str, fixStr) || strings.HasSuffix(str, fixStr)
 }
 
-// 压缩字符串,删除字符串中的多余空格,有多个空格时,仅保留一个空格,可用于将已格式化的json字符串压缩
+// DelExtraSpace 压缩字符串,删除字符串中的多余空格,有多个空格时,仅保留一个空格,可用于将已格式化的json字符串压缩
 func DelExtraSpace(src string) string {
 	src = strings.ToLower(src) // 全部转小写
 	// 删除字符串中的多余空格,有多个空格时,仅保留一个空格

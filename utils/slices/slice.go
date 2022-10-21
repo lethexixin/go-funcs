@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// 任意类型interface{} 转 []interface{}
+// InterfaceToSlice 任意类型interface{} 转 []interface{}
 func InterfaceToSlice(dataSlice interface{}) (result []interface{}) {
 	if reflect.TypeOf(dataSlice).Kind() == reflect.Slice {
 		data := reflect.ValueOf(dataSlice)
@@ -18,39 +18,39 @@ func InterfaceToSlice(dataSlice interface{}) (result []interface{}) {
 	return nil
 }
 
-// 切片去重 空间换时间
+// RemoveRepByMap 切片去重 空间换时间
 func RemoveRepByMap(slc []interface{}) []interface{} {
 	result := make([]interface{}, 0)
 	tempMap := map[interface{}]byte{} // 存放不重复主键
 	for _, e := range slc {
 		l := len(tempMap)
 		tempMap[e] = 0
-		if len(tempMap) != l { // 加入map后，map长度变化，则元素不重复
+		if len(tempMap) != l { // 加入map后, map长度变化, 则元素不重复
 			result = append(result, e)
 		}
 	}
 	return result
 }
 
-// 切片去重 时间换空间
+// RemoveRepByLoop 切片去重 时间换空间
 func RemoveRepByLoop(slc []interface{}) []interface{} {
 	result := make([]interface{}, 0)
 	for i := range slc {
 		flag := true
 		for j := range result {
 			if slc[i] == result[j] {
-				flag = false // 存在重复元素，标识为false
+				flag = false // 存在重复元素, 标识为false
 				break
 			}
 		}
-		if flag { // 标识为false，不添加进结果
+		if flag { // 标识为false, 不添加进结果
 			result = append(result, slc[i])
 		}
 	}
 	return result
 }
 
-// 通过反射的方式判断切片中是否有一样的内容,然后去重
+// RemoveRepByReflect 通过反射的方式判断切片中是否有一样的内容,然后去重
 func RemoveRepByReflect(src []interface{}) (dst []interface{}) {
 	length := len(src)
 	for i := 0; i < length; i++ {

@@ -57,7 +57,7 @@ func Timeout(timeout int) Option {
 	}
 }
 
-var (
+const (
 	DefaultDialTimeout        = 15
 	DefaultDialKeepAlive      = 15
 	DefaultMaxIdleConn        = 100

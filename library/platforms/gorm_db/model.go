@@ -30,7 +30,7 @@ type Options struct {
 
 type Option func(*Options)
 
-var (
+const (
 	DefaultLogLevel        = gormLogger.Warn
 	DefaultMysqlDSN        = "root:123456@tcp(localhost:3306)/demo?charset=utf8mb4&parseTime=True&loc=Local"
 	DefaultCkDSN           = "tcp://localhost:9000?database=demo&username=root&password=123456&read_timeout=10&write_timeout=20"

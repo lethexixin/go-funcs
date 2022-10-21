@@ -22,7 +22,7 @@ type Options struct {
 
 type Option func(*Options)
 
-var (
+const (
 	DefaultEmail    = "demo@163.com"
 	DefaultPassword = "123456"
 	DefaultHost     = "smtphm.qiye.163.com"
@@ -68,6 +68,7 @@ func (e *EMail) Init(options ...Option) {
 	e.opts = &opts
 }
 
+// SendEmail
 // 发送邮件
 // receiver: 接收者列表
 // subject: 邮件主题
@@ -86,7 +87,7 @@ func (e *EMail) SendEmail(receiver []string, subject string, content string, reS
 	m.SetBody("text/html", content) //设置邮件正文
 
 	for _, attach := range attachPath {
-		m.Attach(attach) //设置附件，填写附件路径和名称
+		m.Attach(attach) //设置附件, 填写附件路径和名称
 	}
 
 	dialer := gomail.NewDialer(e.opts.host, e.opts.port, e.opts.email, e.opts.password)

@@ -12,7 +12,7 @@ import (
 	"io/ioutil"
 )
 
-// aesCBC加密
+// aesCBCEncrypt aesCBC加密
 func aesCBCEncrypt(plaintext, key []byte, iv string) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
@@ -42,14 +42,14 @@ func aesCBCEncrypt(plaintext, key []byte, iv string) ([]byte, error) {
 	return ciphertext, nil
 }
 
-// aesCBC解密
+// aesCBCDecrypt aesCBC解密
 func aesCBCDecrypt(cipherText, key []byte, iv string) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}
 
-	// The IV needs to be unique, but not secure. Therefore it's common to
+	// The IV needs to be unique, but not secure. So it's common to
 	// include it at the beginning of the ciphertext.
 	if len(cipherText) < aes.BlockSize {
 		return nil, errors.New("ciphertext too short")
@@ -78,6 +78,7 @@ func aesCBCDecrypt(cipherText, key []byte, iv string) ([]byte, error) {
 	return cipherText[:len(cipherText)-pad], nil
 }
 
+// EncodeAESCBC
 /*
 AES_CBC加密解密的算法为: aes-256-cbc, iv初始向量为随机16位字符串, 常用于HTTP中, 过程如下:
 1.客户端发送加密请求体 ---> 2.服务器接收请求体并解密 ---> 3.服务器处理请求,返回加密响应体 ---> 4.客户端接收响应体并解密
@@ -113,6 +114,7 @@ func EncodeAESCBC(data, key []byte) ([]byte, error) {
 	return buf, nil
 }
 
+// DecodeAESCBC
 /*
 AES_CBC加密解密的算法为: aes-256-cbc, iv初始向量为随机16位字符串, 常用于HTTP中, 过程如下:
 1.客户端发送加密请求体 ---> 2.服务器接收请求体并解密 ---> 3.服务器处理请求,返回加密响应体 ---> 4.客户端接收响应体并解密

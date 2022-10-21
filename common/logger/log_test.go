@@ -1,8 +1,11 @@
 package logger
 
 import (
-	"go.uber.org/zap/zapcore"
 	"testing"
+)
+
+import (
+	"go.uber.org/zap/zapcore"
 )
 
 func TestLogConsole(t *testing.T) {

@@ -7,9 +7,13 @@ import (
 	"strings"
 	"sync"
 	"time"
+)
 
+import (
 	"github.com/lethexixin/go-funcs/common/logger"
+)
 
+import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -32,21 +36,21 @@ func InitMetrics(appName string) {
 }
 
 type Options struct {
-	BootstrapServers           string
-	MessageMaxBytes            int
-	BatchSize                  int
-	LingerMs                   int
-	StickyPartitioningLingerMs int
-	Retries                    int
-	RetryBackoffMs             int
-	Acks                       string
-	CompressionType            string
-	SecurityProtocol           string
-	SaslMechanism              string
-	SaslUsername               string
-	SaslPassword               string
+	bootstrapServers           string
+	messageMaxBytes            int
+	batchSize                  int
+	lingerMs                   int
+	stickyPartitioningLingerMs int
+	retries                    int
+	retryBackoffMs             int
+	acks                       string
+	compressionType            string
+	securityProtocol           string
+	saslMechanism              string
+	saslUsername               string
+	saslPassword               string
 
-	SignChan chan os.Signal
+	signChan chan os.Signal
 }
 
 type MsgProducerData struct {
@@ -56,13 +60,13 @@ type MsgProducerData struct {
 
 type Option func(*Options)
 
-var (
+const (
 	// kafka producer config refer to https://help.aliyun.com/document_detail/68165.html and https://www.lovergamer.com/posts/kafka/kafka_products
 
 	DefaultBootstrapServers = "127.0.0.1:9092"
 	// DefaultMessageMaxBytes 允许的最大记录批量大小
 	DefaultMessageMaxBytes = 1048588
-	// DefaultBatchSize 发往每个分区（Partition）的消息缓存量（消息内容的字节数之和，不是条数）
+	// DefaultBatchSize 发往每个分区(Partition)的消息缓存量(消息内容的字节数之和, 不是条数)
 	DefaultBatchSize = 16384
 	// DefaultLingerMs 每条消息在缓存中的最长时间
 	DefaultLingerMs = 1000
@@ -84,85 +88,85 @@ var (
 
 func BootstrapServers(bootstrapServers string) Option {
 	return func(o *Options) {
-		o.BootstrapServers = bootstrapServers
+		o.bootstrapServers = bootstrapServers
 	}
 }
 
 func MessageMaxBytes(messageMaxBytes int) Option {
 	return func(o *Options) {
-		o.MessageMaxBytes = messageMaxBytes
+		o.messageMaxBytes = messageMaxBytes
 	}
 }
 
 func BatchSize(batchSize int) Option {
 	return func(o *Options) {
-		o.BatchSize = batchSize
+		o.batchSize = batchSize
 	}
 }
 
 func LingerMs(lingerMs int) Option {
 	return func(o *Options) {
-		o.LingerMs = lingerMs
+		o.lingerMs = lingerMs
 	}
 }
 
 func StickyPartitioningLingerMs(stickyPartitioningLingerMs int) Option {
 	return func(o *Options) {
-		o.StickyPartitioningLingerMs = stickyPartitioningLingerMs
+		o.stickyPartitioningLingerMs = stickyPartitioningLingerMs
 	}
 }
 
 func Retries(retries int) Option {
 	return func(o *Options) {
-		o.Retries = retries
+		o.retries = retries
 	}
 }
 
 func RetryBackoffMs(retryBackoffMs int) Option {
 	return func(o *Options) {
-		o.RetryBackoffMs = retryBackoffMs
+		o.retryBackoffMs = retryBackoffMs
 	}
 }
 
 func Acks(acks string) Option {
 	return func(o *Options) {
-		o.Acks = acks
+		o.acks = acks
 	}
 }
 
 func CompressionType(compressionType string) Option {
 	return func(o *Options) {
-		o.CompressionType = compressionType
+		o.compressionType = compressionType
 	}
 }
 
 func SecurityProtocol(securityProtocol string) Option {
 	return func(o *Options) {
-		o.SecurityProtocol = securityProtocol
+		o.securityProtocol = securityProtocol
 	}
 }
 
 func SaslMechanism(saslMechanism string) Option {
 	return func(o *Options) {
-		o.SaslMechanism = saslMechanism
+		o.saslMechanism = saslMechanism
 	}
 }
 
 func SaslUsername(saslUsername string) Option {
 	return func(o *Options) {
-		o.SaslUsername = saslUsername
+		o.saslUsername = saslUsername
 	}
 }
 
 func SaslPassword(saslPassword string) Option {
 	return func(o *Options) {
-		o.SaslPassword = saslPassword
+		o.saslPassword = saslPassword
 	}
 }
 
 func SignChan(signChan chan os.Signal) Option {
 	return func(o *Options) {
-		o.SignChan = signChan
+		o.signChan = signChan
 	}
 }
 
@@ -193,58 +197,58 @@ func SignChan(signChan chan os.Signal) Option {
 //
 func (k *KafkaProducer) InitProducer(fn func(), options ...Option) (err error) {
 	opts := Options{
-		BootstrapServers:           DefaultBootstrapServers,
-		MessageMaxBytes:            DefaultMessageMaxBytes,
-		BatchSize:                  DefaultBatchSize,
-		LingerMs:                   DefaultLingerMs,
-		StickyPartitioningLingerMs: DefaultStickyPartitioningLingerMs,
-		Retries:                    DefaultRetries,
-		RetryBackoffMs:             DefaultRetryBackoffMs,
-		Acks:                       DefaultAcks,
-		CompressionType:            DefaultCompressionType,
-		SecurityProtocol:           DefaultSecurityProtocol,
-		SaslMechanism:              DefaultSaslMechanism,
-		SaslUsername:               DefaultSaslUsername,
-		SaslPassword:               DefaultSaslPassword,
+		bootstrapServers:           DefaultBootstrapServers,
+		messageMaxBytes:            DefaultMessageMaxBytes,
+		batchSize:                  DefaultBatchSize,
+		lingerMs:                   DefaultLingerMs,
+		stickyPartitioningLingerMs: DefaultStickyPartitioningLingerMs,
+		retries:                    DefaultRetries,
+		retryBackoffMs:             DefaultRetryBackoffMs,
+		acks:                       DefaultAcks,
+		compressionType:            DefaultCompressionType,
+		securityProtocol:           DefaultSecurityProtocol,
+		saslMechanism:              DefaultSaslMechanism,
+		saslUsername:               DefaultSaslUsername,
+		saslPassword:               DefaultSaslPassword,
 	}
 
 	for _, o := range options {
 		o(&opts)
 	}
 
-	if opts.SignChan == nil {
-		return errors.New("opts.SignChan == nil")
+	if opts.signChan == nil {
+		return errors.New("opts.signChan == nil")
 	}
 
 	kafkaConf := &kafka.ConfigMap{
-		"bootstrap.servers":             opts.BootstrapServers,
+		"bootstrap.servers":             opts.bootstrapServers,
 		"api.version.request":           "true",
-		"message.max.bytes":             opts.MessageMaxBytes,
-		"batch.size":                    opts.BatchSize,
-		"linger.ms":                     opts.LingerMs,
-		"sticky.partitioning.linger.ms": opts.StickyPartitioningLingerMs,
-		"retries":                       opts.Retries,
-		"retry.backoff.ms":              opts.RetryBackoffMs,
-		"acks":                          opts.Acks,
-		"compression.type":              opts.CompressionType}
+		"message.max.bytes":             opts.messageMaxBytes,
+		"batch.size":                    opts.batchSize,
+		"linger.ms":                     opts.lingerMs,
+		"sticky.partitioning.linger.ms": opts.stickyPartitioningLingerMs,
+		"retries":                       opts.retries,
+		"retry.backoff.ms":              opts.retryBackoffMs,
+		"acks":                          opts.acks,
+		"compression.type":              opts.compressionType}
 
-	switch strings.ToUpper(opts.SecurityProtocol) {
+	switch strings.ToUpper(opts.securityProtocol) {
 	case "PLAINTEXT":
 		_ = kafkaConf.SetKey("security.protocol", "plaintext")
 	case "SASL_SSL":
 		_ = kafkaConf.SetKey("security.protocol", "sasl_ssl")
 		_ = kafkaConf.SetKey("ssl.ca.location", "conf/mix-4096-ca-cert")
-		_ = kafkaConf.SetKey("sasl.username", opts.SaslUsername)
-		_ = kafkaConf.SetKey("sasl.password", opts.SaslPassword)
-		_ = kafkaConf.SetKey("sasl.mechanism", opts.SaslMechanism)
+		_ = kafkaConf.SetKey("sasl.username", opts.saslUsername)
+		_ = kafkaConf.SetKey("sasl.password", opts.saslPassword)
+		_ = kafkaConf.SetKey("sasl.mechanism", opts.saslMechanism)
 		_ = kafkaConf.SetKey("enable.ssl.certificate.verification", "false")
 	case "SASL_PLAINTEXT":
 		_ = kafkaConf.SetKey("security.protocol", "sasl_plaintext")
-		_ = kafkaConf.SetKey("sasl.username", opts.SaslUsername)
-		_ = kafkaConf.SetKey("sasl.password", opts.SaslPassword)
-		_ = kafkaConf.SetKey("sasl.mechanism", opts.SaslMechanism)
+		_ = kafkaConf.SetKey("sasl.username", opts.saslUsername)
+		_ = kafkaConf.SetKey("sasl.password", opts.saslPassword)
+		_ = kafkaConf.SetKey("sasl.mechanism", opts.saslMechanism)
 	default:
-		return fmt.Errorf("unknown kafka protocol:%s", opts.SecurityProtocol)
+		return fmt.Errorf("unknown kafka protocol:%s", opts.securityProtocol)
 	}
 
 	k.Producer, err = kafka.NewProducer(kafkaConf)
@@ -290,8 +294,8 @@ func (k *KafkaProducer) InitProducer(fn func(), options ...Option) (err error) {
 	run := true
 	for run {
 		select {
-		case <-opts.SignChan:
-			logger.Info("producer get <-opts.SignChan")
+		case <-opts.signChan:
+			logger.Info("producer get <-opts.signChan")
 			run = false
 		default:
 			fn()

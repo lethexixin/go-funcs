@@ -7,11 +7,12 @@ require (
 	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/dgryski/go-skip32 v0.0.0-20151116144831-0e0460d2a555
 	github.com/gin-gonic/gin v1.7.7
+	github.com/go-playground/assert/v2 v2.0.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.2
+	github.com/google/uuid v1.3.0
 	github.com/prometheus/client_golang v1.12.2
 	github.com/rabbitmq/amqp091-go v1.3.4
-	github.com/satori/go.uuid v1.2.0
 	go.uber.org/zap v1.21.0
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
 	google.golang.org/grpc v1.46.0

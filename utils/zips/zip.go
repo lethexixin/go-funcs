@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// 解压zip, archive: 源文件路径(非目录), target: 解压目标目录
+// Unzip 解压zip, archive: 源文件路径(非目录), target: 解压目标目录
 func Unzip(archive, target string) error {
 	reader, err := zip.OpenReader(archive)
 	if err != nil {
@@ -31,24 +31,23 @@ func Unzip(archive, target string) error {
 		if errOpen != nil {
 			return fmt.Errorf("file.Open err: %s", errOpen.Error())
 		}
-		//defer fileReader.Close()
 
 		targetFile, errOpenFile := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
 		if errOpenFile != nil {
 			return fmt.Errorf("os.OpenFile(%s) err: %s", filePath, errOpenFile.Error())
 		}
-		//defer targetFile.Close()
 
-		if _, err = io.Copy(targetFile, fileReader); err != nil {
-			return err
-		}
+		_, err = io.Copy(targetFile, fileReader)
 		_ = fileReader.Close()
 		_ = targetFile.Close()
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-// 多个文件压缩为zip, filePaths: 需要压缩的文件的路径, zipPath: 最终压缩后的文件路径
+// Zip 多个文件压缩为zip, filePaths: 需要压缩的文件的路径, zipPath: 最终压缩后的文件路径
 func Zip(filePaths []string, zipPath string) (err error) {
 	buf := new(bytes.Buffer)
 	w := zip.NewWriter(buf)

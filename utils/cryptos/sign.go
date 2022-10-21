@@ -11,10 +11,10 @@ import (
 	"sync"
 )
 
-//签名的字符编码类型
+// GolangCharset 签名的字符编码类型
 type GolangCharset string
 
-//字符编码类型常量
+// 字符编码类型常量
 const (
 	CharsetIso2022Jp         GolangCharset = "ISO-2022-JP"
 	CharsetIso2022Cn                       = "ISO-2022-CN"
@@ -47,18 +47,17 @@ const (
 	CharsetXIso10646Ucs42143               = "X-ISO-10646-UCS-4-2143"
 )
 
-//当前类的指针
-var sign *signUtils
+// 当前类的指针
+var sign *SignUtils
 
-//同步锁
+// 同步锁
 var signOnce sync.Once
 
-//签名类
-type signUtils struct {
+// SignUtils 签名类
+type SignUtils struct {
 	mapExtend *MapExtend
 }
 
-//签名类
 type MapExtend struct {
 }
 
@@ -69,7 +68,7 @@ func (s *MapExtend) GetKeys(toSignMap *map[string]interface{}) (keys []string, e
 	return keys, err
 }
 
-// 形成符合签名格式的Map
+// ToSignMap 形成符合签名格式的Map
 func (s *MapExtend) ToSignMap(parameters *map[string]interface{}) map[string]interface{} {
 	signMap := make(map[string]interface{})
 	for k, v := range *parameters {
@@ -84,28 +83,29 @@ func (s *MapExtend) ToSignMap(parameters *map[string]interface{}) map[string]int
 	return signMap
 }
 
-// 实例化签名
-func NewSign() *signUtils {
+// NewSign 实例化签名
+func NewSign() *SignUtils {
 	signOnce.Do(func() {
-		sign = new(signUtils)
+		sign = new(SignUtils)
 		sign.mapExtend = new(MapExtend)
 	})
 	return sign
 }
 
-// 默认utf8字符串
-func (s *signUtils) GetUtf8Bytes(str string) []byte {
+// GetUtf8Bytes 默认utf8字符串
+func (s *SignUtils) GetUtf8Bytes(str string) []byte {
 	b := []byte(str)
 	return b
 }
 
-/**
+// SignTopRequest
+/*
 签名算法
 parameters 要签名的数据项
 secret 生成的publicKey
 signMethod 签名的字符编码
 */
-func (s *signUtils) SignTopRequest(parameters *map[string]interface{}, secret string, signMethod GolangCharset) string {
+func (s *SignUtils) SignTopRequest(parameters *map[string]interface{}, secret string, signMethod GolangCharset) string {
 	/**
 	  1、第一步: 形成符合签名格式的Map
 	  2、第二步: 按字典把Key的字母顺序排序

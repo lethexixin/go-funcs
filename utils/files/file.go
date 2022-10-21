@@ -35,7 +35,7 @@ func GetFileExt(fileName string) string {
 	return path.Ext(fileName)
 }
 
-// 获取文件的名称和后缀名信息,filename可以是test.txt,也可以是/root/test/test.txt之类的
+// GetFileNameInfo 获取文件的名称和后缀名信息,filename可以是test.txt,也可以是/root/test/test.txt之类的
 // nameInfo代表除去后缀名的文件名,ext代表后缀名
 func GetFileNameInfo(filename string) (nameInfo, ext string) {
 	filename = path.Base(filename)
@@ -100,7 +100,7 @@ func MustOpen(fileName, filePath string) (file *os.File, err error) {
 	return file, nil
 }
 
-//获取指定目录下的所有文件名和目录
+// GetFilesAndDirs 获取指定目录下的所有文件名和目录
 func GetFilesAndDirs(dirPth string, extensions []string) (files []string, dirs []string, err error) {
 	dirsPath, err := ioutil.ReadDir(dirPth)
 	if err != nil {
@@ -177,7 +177,7 @@ func GetAllFiles(dirPth string, childDir bool, extensions []string) (files []str
 	return files, nil
 }
 
-// 按行写入文件,dir指的是路径,filename指的是文件名,dataLines指的是具体的数据,lineEnding指的是分割符,如\n,
+// WriteLines 按行写入文件,dir指的是路径,filename指的是文件名,dataLines指的是具体的数据,lineEnding指的是分割符,如\n,
 // writeTime指是否需要在行首写入时间,append指是否需要追加写入
 func WriteLines(dir string, filename string, dataLines []string, lineEnding string, writeTime bool, append bool) error {
 	if _, err := IsNotExistToMkDir(dir); err != nil {
@@ -217,7 +217,7 @@ func WriteLines(dir string, filename string, dataLines []string, lineEnding stri
 	return nil
 }
 
-// 封装的文件拷贝方法,srcName源文件, dstName目标文件
+// CopyFile 封装的文件拷贝方法,srcName源文件, dstName目标文件
 func CopyFile(srcName string, dstName string) (int64, error) {
 	src, err := os.Open(srcName)
 	if err != nil {
