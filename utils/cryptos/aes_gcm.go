@@ -83,7 +83,7 @@ AES_GCM加密解密的算法为: aes-256-gcm, nonce为随机12位字符串, padd
 即 AES_GCM加密: 压缩 --> AES加密 --> base64加密
 */
 
-func EncodeAESGCM(data, key []byte) ([]byte, []byte, error) {
+func EncodeAESGCM(data, key []byte) (base64ContentBytes []byte, nonceBytes []byte, err error) {
 	if len(data) == 0 {
 		return nil, nil, errors.New("length of data is zero")
 	}
@@ -123,14 +123,14 @@ AES_GCM加密解密的算法为: aes-256-gcm, nonce为随机12位字符串, padd
 解密数据处理的流程为: 先将nonce拼接加密的数据进行Base64解码, 然后按照aes-256-gcm用key和nonce对数据进行解密, 最后对数据进行zlib 6 level解压
 即 AES_GCM解密: base64解密 --> AES解密 --> 解压缩
 */
-func DecodeAESGCM(data, key []byte) ([]byte, error) {
+func DecodeAESGCM(data, key []byte) (contentBytes []byte, err error) {
 	if len(data) == 0 {
 		return nil, errors.New("length of data is zero")
 	}
 
 	// base64 decode
 	decoder := base64.NewDecoder(base64.StdEncoding, bytes.NewReader(data))
-	data, err := ioutil.ReadAll(decoder)
+	data, err = ioutil.ReadAll(decoder)
 	if err != nil {
 		return nil, err
 	}

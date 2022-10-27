@@ -86,7 +86,7 @@ AES_CBC加密解密的算法为: aes-256-cbc, iv初始向量为随机16位字符
 加密数据处理的流程为: 先对数据进行zlib 6 level压缩, 然后按照aes-256-cbc用key和iv对数据进行加密, 最后对iv拼接加密的数据进行Base64编码
 即 AES_CBC加密: 压缩 --> AES加密 --> base64加密
 */
-func EncodeAESCBC(data, key []byte) ([]byte, error) {
+func EncodeAESCBC(data, key []byte) (base64ContentBytes []byte, err error) {
 	if len(data) == 0 {
 		return nil, errors.New("length of data is zero")
 	}
@@ -122,14 +122,14 @@ AES_CBC加密解密的算法为: aes-256-cbc, iv初始向量为随机16位字符
 解密数据处理的流程为: 先将iv拼接加密的数据进行Base64解码, 然后按照aes-256-cbc用key和iv对数据进行解密, 最后对数据进行zlib 6 level解压
 即 AES_CBC解密: base64解密 --> AES解密 --> 解压缩
 */
-func DecodeAESCBC(data, key []byte) ([]byte, error) {
+func DecodeAESCBC(data, key []byte) (contentBytes []byte, err error) {
 	if len(data) == 0 {
 		return nil, errors.New("length of data is zero")
 	}
 
 	// base64 decode
 	decoder := base64.NewDecoder(base64.StdEncoding, bytes.NewReader(data))
-	data, err := ioutil.ReadAll(decoder)
+	data, err = ioutil.ReadAll(decoder)
 	if err != nil {
 		return nil, err
 	}

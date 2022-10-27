@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -55,6 +56,7 @@ type Options struct {
 
 type MsgProducerData struct {
 	Data  string
+	Key   string
 	Topic string
 }
 
@@ -177,20 +179,16 @@ func SignChan(signChan chan os.Signal) Option {
 //2. (fn func()) examples:
 //
 // type Handler struct {
-// 	 source1Chan chan MsgProducerData
-//	 source2Chan chan MsgProducerData
-//	 source3Chan chan MsgProducerData
+// 	 sourceChan chan MsgProducerData
 // }
 //
 // func (h *Handler) producerFunc(p *KafkaProducer) func() {
 //	 return func() {
 //		 select {
-//		 case v := <-h.source1Chan:
-//			 _ = p.SendMsg(&v)
-//		 case v := <-h.source2Chan:
-//			 _ = p.SendMsg(&v)
-//		 case v := <-h.source3Chan:
-//			 _ = p.SendMsg(&v)
+//		 case v := <-h.sourceChan:
+//           go func() {
+//               _ = p.SendMsg(&v)
+//           }()
 //		 }
 //	 }
 // }
@@ -282,7 +280,7 @@ func (k *KafkaProducer) InitProducer(fn func(), options ...Option) (err error) {
 				// These errors should generally be considered informational as the underlying client will automatically try to recover from any errors encountered, the application does not need to take action on them.
 				logger.Errorf("p.Events is err:%s", ev.Error())
 				if counterMetric != nil {
-					counterMetric.With(prometheus.Labels{"topic": "", "flag": "error"}).Inc()
+					counterMetric.With(prometheus.Labels{"topic": "producer", "flag": "error"}).Inc()
 				}
 			default:
 				logger.Infof("ignored event:%v", ev)
@@ -309,14 +307,19 @@ func (k *KafkaProducer) InitProducer(fn func(), options ...Option) (err error) {
 }
 
 func (k *KafkaProducer) SendMsg(v *MsgProducerData) (err error) {
+	if len(v.Key) == 0 {
+		v.Key = strconv.Itoa(int(time.Now().UnixNano()))
+	}
 	if err = k.Producer.Produce(&kafka.Message{
 		TopicPartition: kafka.TopicPartition{Topic: &v.Topic, Partition: kafka.PartitionAny},
+		Key:            []byte(v.Key),
 		Value:          []byte(v.Data),
 	}, nil); err != nil {
 		switch err.(kafka.Error).Code() {
 		case kafka.ErrQueueFull:
 			// Producer queue is full, wait 1s for messages to be delivered then try again.
-			time.Sleep(time.Second)
+			// time.Sleep(time.Second)
+			logger.Errorf("failed to produce message, err:%s", err.Error())
 		case kafka.ErrMsgSizeTooLarge:
 			logger.Errorf("failed to produce message, err:%s, len:%d", err.Error(), len(v.Data))
 		default:
