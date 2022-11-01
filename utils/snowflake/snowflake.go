@@ -52,8 +52,13 @@ func (s *Snowflake) GenerateId() (id int64, err error) {
 	// 获取id最关键的一点 加锁 加锁 加锁
 	s.mu.Lock()
 	defer s.mu.Unlock() // 生成完成后记得 解锁 解锁 解锁
+
 	now := time.Now().UnixMilli()
-	if s.timestamp == now {
+	// 当前时间小于上一次生成的id时间, 说明时间发生了回拨, 直接返回错误即可, 等到时间追上后就可以继续正常服务了
+	if now < s.timestamp {
+		return 0, fmt.Errorf("time callback, please try again later")
+	}
+	if now == s.timestamp {
 		// 当同一时间戳(精度:毫秒)下多次生成id会增加序列号
 		s.sequence = (s.sequence + 1) & sequenceMask
 		if s.sequence == 0 {
