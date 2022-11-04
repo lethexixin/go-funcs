@@ -25,6 +25,7 @@ logs/
 cache
 log/
 *.log
+tmp/
 
 # macOS
 .DS_Store
