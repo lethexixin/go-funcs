@@ -33,7 +33,7 @@ type Option func(*Options)
 const (
 	DefaultLogLevel        = gormLogger.Warn
 	DefaultMysqlDSN        = "root:123456@tcp(localhost:3306)/demo?charset=utf8mb4&parseTime=True&loc=Local"
-	DefaultCkDSN           = "tcp://localhost:9000?database=demo&username=root&password=123456&read_timeout=10&write_timeout=20"
+	DefaultCkDSN           = "http://localhost:8123/test?username=default&password=123456&dial_timeout=200ms&max_execution_time=60"
 	DefaultPGDSN           = "host=localhost user=root password=123456 dbname=demo port=9920 sslmode=disable TimeZone=Asia/Shanghai"
 	DefaultMaxOpenConn     = 1000
 	DefaultMaxIdleConn     = 100

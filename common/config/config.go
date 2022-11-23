@@ -43,13 +43,13 @@ type ConsulConfig struct {
 
 var (
 	ErrAddrIsEmpty    = errors.New("config center addr is empty")
-	ErrContextIsEmpty = errors.New("config context is empty")
+	ErrContentIsEmpty = errors.New("config content is empty")
 )
 
 // LoadFileConfig 引导 file 配置数据给 conf
 func (c *FileConfig) LoadFileConfig(conf interface{}) (err error) {
 	if _, err = toml.DecodeFile(c.Path, conf); err != nil {
-		logger.Errorf("file, failed to decode context from local file:%s, err:%s", c.Path, err.Error())
+		logger.Errorf("file, failed to decode content from local file:%s, err:%s", c.Path, err.Error())
 		return err
 	}
 	logger.Infof("file, load config successful from local file:%s", c.Path)
@@ -92,17 +92,17 @@ func (c *NacosConfig) LoadNacosConfig(conf interface{}) (err error) {
 		Group:  c.Group,
 	})
 	if err != nil {
-		logger.Errorf("nacos, failed to get config context from addr:%s, namespaceId:%s, dataId:%s, group:%s, err:%s", c.Addr, c.Namespace, c.DataId, c.Group, err.Error())
+		logger.Errorf("nacos, failed to get config content from addr:%s, namespaceId:%s, dataId:%s, group:%s, err:%s", c.Addr, c.Namespace, c.DataId, c.Group, err.Error())
 		return err
 	}
 
 	if len(content) == 0 {
-		logger.Errorf("nacos, config context is empty from addr:%s, namespaceId:%s, dataId:%s, group:%s", c.Addr, c.Namespace, c.DataId, c.Group)
-		return ErrContextIsEmpty
+		logger.Errorf("nacos, config content is empty from addr:%s, namespaceId:%s, dataId:%s, group:%s", c.Addr, c.Namespace, c.DataId, c.Group)
+		return ErrContentIsEmpty
 	}
 
 	if _, err = toml.NewDecoder(bytes.NewBuffer([]byte(content))).Decode(conf); err != nil {
-		logger.Errorf("nacos, failed to decode context from addr:%s, namespaceId:%s, dataId:%s, group:%s, err:%s", c.Addr, c.Namespace, c.DataId, c.Group, err.Error())
+		logger.Errorf("nacos, failed to decode content from addr:%s, namespaceId:%s, dataId:%s, group:%s, err:%s", c.Addr, c.Namespace, c.DataId, c.Group, err.Error())
 		return err
 	}
 
@@ -116,7 +116,7 @@ func (c *NacosConfig) ListenConfig(conf interface{}) {
 		DataId: c.DataId, Group: c.Group, OnChange: func(namespace, group, dataId, data string) {
 			if len(data) != 0 {
 				if _, err := toml.NewDecoder(bytes.NewBuffer([]byte(data))).Decode(conf); err != nil {
-					logger.Errorf("nacos, failed to decode context from addr:%s, namespaceId:%s, dataId:%s, group:%s, err:%s", c.Addr, c.Namespace, c.DataId, c.Group, err.Error())
+					logger.Errorf("nacos, failed to decode content from addr:%s, namespaceId:%s, dataId:%s, group:%s, err:%s", c.Addr, c.Namespace, c.DataId, c.Group, err.Error())
 				}
 			}
 		}})
@@ -148,17 +148,17 @@ func (c *ConsulConfig) LoadConsulConfig(conf interface{}) (err error) {
 
 	content, _, err := c.Client.KV().Get(c.ServiceId, nil)
 	if err != nil {
-		logger.Errorf("consul, failed to get config context from addr:%s, serviceId:%s, err:%s", c.Addr, c.ServiceId, err.Error())
+		logger.Errorf("consul, failed to get config content from addr:%s, serviceId:%s, err:%s", c.Addr, c.ServiceId, err.Error())
 		return err
 	}
 
 	if content == nil {
-		logger.Errorf("consul, config context is empty from addr:%s, serviceId:%s", c.Addr, c.ServiceId)
-		return ErrContextIsEmpty
+		logger.Errorf("consul, config content is empty from addr:%s, serviceId:%s", c.Addr, c.ServiceId)
+		return ErrContentIsEmpty
 	}
 
 	if _, err = toml.NewDecoder(bytes.NewBuffer(content.Value)).Decode(conf); err != nil {
-		logger.Errorf("consul, failed to decode context from addr:%s, serviceId:%s, err:%s", c.Addr, c.ServiceId, err.Error())
+		logger.Errorf("consul, failed to decode content from addr:%s, serviceId:%s, err:%s", c.Addr, c.ServiceId, err.Error())
 		return err
 	}
 
