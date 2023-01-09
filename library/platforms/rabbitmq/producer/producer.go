@@ -1,6 +1,7 @@
 package producer
 
 import (
+	"context"
 	"errors"
 	"net"
 	"time"
@@ -38,6 +39,8 @@ const (
 
 	// When resending messages the server didn't confirm
 	resendDelay = 5 * time.Second
+
+	pushTimeout = 30 * time.Second
 )
 
 var (
@@ -272,7 +275,7 @@ func (p *producer) init(conn *amqp.Connection) error {
 // and updates the close listener to reflect this.
 func (p *producer) changeConnection(connection *amqp.Connection) {
 	p.connection = connection
-	p.notifyConnClose = make(chan *amqp.Error)
+	p.notifyConnClose = make(chan *amqp.Error, 1)
 	p.connection.NotifyClose(p.notifyConnClose)
 }
 
@@ -280,7 +283,7 @@ func (p *producer) changeConnection(connection *amqp.Connection) {
 // and updates the channel listeners to reflect this.
 func (p *producer) changeChannel(channel *amqp.Channel) {
 	p.channel = channel
-	p.notifyChanClose = make(chan *amqp.Error)
+	p.notifyChanClose = make(chan *amqp.Error, 1)
 	p.notifyConfirm = make(chan amqp.Confirmation, 1)
 	p.channel.NotifyClose(p.notifyChanClose)
 	p.channel.NotifyPublish(p.notifyConfirm)
@@ -325,7 +328,11 @@ func (p *producer) UnsafePush(data []byte, priority uint8) error {
 	if !p.isReady {
 		return errNotConnected
 	}
-	return p.channel.Publish(
+
+	ctx, cancel := context.WithTimeout(context.Background(), pushTimeout)
+	defer cancel()
+
+	return p.channel.PublishWithContext(ctx,
 		p.opts.exchangeName, // Exchange
 		p.opts.routingKey,   // Routing key
 		false,               // Mandatory
@@ -338,39 +345,18 @@ func (p *producer) UnsafePush(data []byte, priority uint8) error {
 	)
 }
 
-// Stream will continuously put queue items on the channel.
-// It is required to call delivery.Ack when it has been
-// successfully processed, or delivery.Nack when it fails.
-// Ignoring this will cause data to build up on the server.
-func (p *producer) Stream() (<-chan amqp.Delivery, error) {
-	if !p.isReady {
-		return nil, errNotConnected
-	}
-	return p.channel.Consume(
-		p.opts.queueName,
-		"",    // Consumer
-		false, // Auto-Ack
-		false, // Exclusive
-		false, // No-local
-		false, // No-Wait
-		nil,   // Args
-	)
-}
-
 // Close will cleanly shut down the channel and connection.
 func (p *producer) Close() error {
 	if !p.isReady {
 		return errAlreadyClosed
 	}
-	err := p.channel.Close()
-	if err != nil {
-		return err
-	}
-	err = p.connection.Close()
-	if err != nil {
-		return err
-	}
 	close(p.done)
+	if err := p.channel.Close(); err != nil {
+		return err
+	}
+	if err := p.connection.Close(); err != nil {
+		return err
+	}
 	p.isReady = false
 	return nil
 }
