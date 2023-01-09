@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: go-funcs
+  labels:
+    app: go-funcs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-funcs
+  template:
+    metadata:
+      labels:
+        app: go-funcs
+    spec:
+      containers:
+      - name: go-funcs
+        image: lethexixin/go-funcs:latest
+        # 一定要有 lifecycle.preStop 去睡眠一段时间, 为服务优雅下线做准备
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh","-c","wget http://localhost:7299/stop ; sleep 15"]
+        # 一定要有就绪探针, 为服务上线做准备
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 7299
+            scheme: HTTP
+          initialDelaySeconds: 3
+          periodSeconds: 3
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
