@@ -88,7 +88,7 @@ func JWT(key []byte) gin.HandlerFunc {
 		// token := c.Query("token")
 		token := c.Request.Header.Get("Authorization")
 		if token == "" {
-			c.String(http.StatusOK, "Authorization Token is empty")
+			c.String(http.StatusUnauthorized, "Authorization Token is empty")
 			c.Abort()
 			return
 		}
@@ -96,7 +96,7 @@ func JWT(key []byte) gin.HandlerFunc {
 		// 按空格分割
 		parts := strings.SplitN(token, " ", 2)
 		if !(len(parts) == 2 && parts[0] == "Bearer") {
-			c.String(http.StatusOK, "Authorization Bearer is empty")
+			c.String(http.StatusUnauthorized, "Authorization Bearer is empty")
 			c.Abort()
 			return
 		}
@@ -104,7 +104,7 @@ func JWT(key []byte) gin.HandlerFunc {
 		// parts[1]是获取到的tokenString, 我们使用之前定义好的解析JWT的函数来解析它
 		claims, err := ParseToken(parts[1], key)
 		if err != nil {
-			c.String(http.StatusOK, "Token is invalid")
+			c.String(http.StatusUnauthorized, "Token is invalid")
 			c.Abort()
 			return
 		}
